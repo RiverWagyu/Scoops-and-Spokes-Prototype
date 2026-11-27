@@ -2,67 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Scoops & Spokes · Photo booth gallery</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Mitr:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/brand.css?v=8">
-  <link rel="stylesheet" href="css/cashier.css?v=8">
-  <link rel="stylesheet" href="css/gallery.css?v=8">
+  <!-- The gallery now lives on the cashier page. -->
+  <meta http-equiv="refresh" content="0; url=./#gallery">
+  <script>location.replace("./#gallery");</script>
 </head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="amp-badge" style="--size:46px">&amp;</span>
-      <span class="wm" data-wm></span>
-      <span class="tag" data-i18n="galleryTag"></span>
-    </div>
-    <div class="top-actions">
-      <button class="btn small" id="btn-slideshow" data-i18n="slideshow"></button>
-      <a class="btn ghost small" href="./" data-i18n="backCashier"></a>
-      <div class="lang-toggle" role="group" aria-label="Language">
-        <button data-lang-btn="th">TH</button>
-        <button data-lang-btn="en">EN</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="g-main">
-    <div class="g-bar">
-      <div>
-        <h1 data-i18n="galleryTitle"></h1>
-        <p class="hint" id="g-count"></p>
-      </div>
-      <button class="btn ghost small" id="btn-clear" data-i18n="deleteAll"></button>
-    </div>
-    <p class="hint g-note" data-i18n="deviceNote"></p>
-
-    <div id="g-days"></div>
-
-    <div class="g-empty" id="g-empty" hidden>
-      <div class="mascot-disc" style="--size:150px"><img src="" alt="" data-mascot></div>
-      <p data-i18n="emptyText"></p>
-      <a class="btn green" href="./" data-i18n="goBooth"></a>
-    </div>
-  </main>
-
-  <!-- Slideshow for the projector -->
-  <div class="slideshow" id="slideshow" hidden>
-    <button class="ss-close" id="ss-close" aria-label="Close">✕</button>
-    <button class="ss-nav prev" id="ss-prev" aria-label="Previous">‹</button>
-    <figure class="ss-stage">
-      <img id="ss-img" alt="">
-      <figcaption id="ss-cap"></figcaption>
-    </figure>
-    <button class="ss-nav next" id="ss-next" aria-label="Next">›</button>
-    <div class="ss-brand"><span class="amp-badge" style="--size:40px">&amp;</span><span class="wm" data-wm></span></div>
-  </div>
-
-  <script src="js/config.js?v=8"></script>
-  <script src="js/brand.js?v=8"></script>
-  <script src="js/gallery-store.js?v=8"></script>
-  <script src="js/i18n.js?v=8"></script>
-  <script src="js/gallery.js?v=8"></script>
-</body>
+<body><p><a href="./#gallery">Open the photo booth gallery</a></p></body>
 </html>

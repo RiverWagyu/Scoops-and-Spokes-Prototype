@@ -1,8 +1,19 @@
-/* ---------- Photo booth gallery ---------- */
+/* ---------- Photo booth gallery (panel on the cashier page) ---------- */
+body.gallery-open { overflow: hidden; }
+.gallery-panel { position: fixed; inset: 0; z-index: 40; overflow-y: auto; background: var(--olive-lt); animation: gp-in .25s ease-out; }
+@keyframes gp-in { from { opacity: 0; transform: translateY(16px); } }
+.gp-top {
+  position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  padding: 14px 24px; background: var(--green); color: var(--cream); border-bottom: 4px solid var(--mustard);
+}
+.gp-title { display: flex; align-items: center; gap: 12px; }
+.gp-title h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: var(--cream); line-height: 1.1; }
+.gp-title p { margin: 2px 0 0; font-size: .9rem; opacity: .85; }
+.gp-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.gp-top .btn.ghost { color: var(--cream); border-color: var(--cream); }
+.gp-top .btn.ghost:hover { background: rgba(247, 241, 225, .12); }
+.gp-close { background: var(--cream); }
 .g-main { max-width: 1200px; margin: 0 auto; padding: 24px; }
-.g-bar { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
-.g-bar h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 2rem; color: var(--green); }
-.g-bar .hint { margin-top: 4px; font-size: .95rem; }
 .g-note { margin: 6px 0 20px; }
 
 .g-day h2 {

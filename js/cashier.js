@@ -11,7 +11,6 @@
       cashierTag: "Cashier · Salaya",
       checkCoupon: "Check coupon",
       classQr: "Class demo QR",
-      gallery: "Gallery",
       classQrHelp: "Show this on the projector. Everyone who scans gets their own random draw (25% are lucky and spin the wheel).",
       settings: "Settings",
       stepOrder: "Order",
@@ -79,7 +78,6 @@
       cashierTag: "แคชเชียร์ · ศาลายา",
       checkCoupon: "ตรวจคูปอง",
       classQr: "QR เดโมในห้อง",
-      gallery: "แกลเลอรี",
       classQrHelp: "เปิดขึ้นจอโปรเจกเตอร์ ทุกคนที่สแกนจะได้เสี่ยงเซียมซีของตัวเอง (25% ได้หมุนวงล้อ)",
       settings: "ตั้งค่า",
       stepOrder: "รายการสั่ง",
@@ -304,6 +302,7 @@
       try {
         const blob = await (await fetch(state.stripUrl)).blob();
         state.stripId = await window.SSGallery.add({ blob, receiptId: state.receipt?.id || null });
+        window.SSGalleryUI?.refresh();
       } catch (e) { console.warn("Couldn't save to gallery", e); }
     }
     if (state.receipt) { state.receipt.stripUrl = state.stripUrl; renderBack(); }
@@ -681,6 +680,13 @@
   $("#coupon-check").onclick = checkCoupon;
   $("#coupon-id").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); checkCoupon(); } });
 
+  // gallery panel (same page)
+  if (window.SSGalleryUI) {
+    for (const l of ["en", "th"]) Object.assign(DICT[l], window.SSGalleryUI.DICT[l]);
+    $("#btn-gallery").onclick = () => window.SSGalleryUI.open();
+  }
+
   window.SSi18n.onChange(() => { renderMenu(); renderCart(); renderReceipt(); });
   window.SSi18n.init(DICT);
+  if (location.hash === "#gallery") window.SSGalleryUI?.open();
 })();

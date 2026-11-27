@@ -1,14 +1,17 @@
-/* Photo booth gallery: every strip taken on this device, newest first. */
+/* Photo booth gallery panel, shown on top of the cashier page.
+   Every strip taken on this device, newest first. Load before cashier.js. */
 (function () {
-  const { t, fmtDate } = window.SSi18n;
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const t = (...a) => window.SSi18n.t(...a);
+  const fmtDate = (...a) => window.SSi18n.fmtDate(...a);
 
+  // merged into the cashier page's dictionary
   const DICT = {
     en: {
-      galleryTag: "Photo booth",
+      gallery: "Gallery",
       slideshow: "▶ Slideshow",
-      backCashier: "← Cashier",
+      closeGallery: "✕ Close",
       galleryTitle: "Photo booth gallery",
       count: "{n} photo strips",
       count1: "1 photo strip",
@@ -17,17 +20,17 @@
       deleteAll: "Delete all",
       confirmAll: "Delete ALL {n} photo strips from this device? This can't be undone.",
       confirmOne: "Delete this photo strip? This can't be undone.",
-      save: "⬇ Save",
-      del: "🗑 Delete",
-      receipt: "Receipt",
+      gSave: "⬇ Save",
+      gDelete: "🗑 Delete",
+      gReceipt: "Receipt",
       noReceipt: "No receipt yet",
       emptyText: "No photos yet. Every strip taken in the photo booth will show up here.",
       goBooth: "Go to the photo booth"
     },
     th: {
-      galleryTag: "โฟโต้บูธ",
+      gallery: "แกลเลอรี",
       slideshow: "▶ สไลด์โชว์",
-      backCashier: "← แคชเชียร์",
+      closeGallery: "✕ ปิด",
       galleryTitle: "แกลเลอรีโฟโต้บูธ",
       count: "{n} ภาพ",
       count1: "1 ภาพ",
@@ -36,16 +39,17 @@
       deleteAll: "ลบทั้งหมด",
       confirmAll: "ลบภาพทั้งหมด {n} ภาพออกจากเครื่องนี้? ลบแล้วกู้คืนไม่ได้",
       confirmOne: "ลบภาพนี้? ลบแล้วกู้คืนไม่ได้",
-      save: "⬇ บันทึก",
-      del: "🗑 ลบ",
-      receipt: "ใบเสร็จ",
+      gSave: "⬇ บันทึก",
+      gDelete: "🗑 ลบ",
+      gReceipt: "ใบเสร็จ",
       noReceipt: "ยังไม่ได้ออกใบเสร็จ",
       emptyText: "ยังไม่มีภาพ ทุกภาพที่ถ่ายในโฟโต้บูธจะแสดงที่นี่",
       goBooth: "ไปที่โฟโต้บูธ"
     }
   };
 
-  let items = [];        // [{ id, receiptId, createdAt, blob, url }]
+  let items = [];          // [{ id, receiptId, createdAt, blob, url }]
+  let wired = false;
 
   async function load() {
     items.forEach((it) => URL.revokeObjectURL(it.url));
@@ -54,18 +58,17 @@
     render();
   }
 
-  function timeOf(d) {
-    return d.toLocaleTimeString(window.SSi18n.lang === "th" ? "th-TH" : "en-GB", { hour: "2-digit", minute: "2-digit" });
-  }
+  const timeOf = (d) =>
+    d.toLocaleTimeString(window.SSi18n.lang === "th" ? "th-TH" : "en-GB", { hour: "2-digit", minute: "2-digit" });
 
   function render() {
+    if ($("#gallery-panel").hidden) return;
     const n = items.length;
     $("#g-count").textContent = n === 0 ? t("count0") : n === 1 ? t("count1") : t("count", { n });
     $("#btn-clear").hidden = n === 0;
     $("#btn-slideshow").disabled = n === 0;
     $("#g-empty").hidden = n > 0;
 
-    // group by day
     const days = new Map();
     items.forEach((it) => {
       const d = new Date(it.createdAt);
@@ -81,10 +84,10 @@
           ${list.map((it) => `
             <article class="g-card" data-id="${it.id}">
               <button class="g-open" data-act="open" aria-label="${esc(t("slideshow"))}"><img src="${it.url}" alt="Photo booth strip" loading="lazy"></button>
-              <div class="g-meta">${timeOf(new Date(it.createdAt))} · ${it.receiptId ? `${esc(t("receipt"))} <b>${esc(it.receiptId)}</b>` : esc(t("noReceipt"))}</div>
+              <div class="g-meta">${timeOf(new Date(it.createdAt))} · ${it.receiptId ? `${esc(t("gReceipt"))} <b>${esc(it.receiptId)}</b>` : esc(t("noReceipt"))}</div>
               <div class="g-actions">
-                <button class="btn small" data-act="save">${esc(t("save"))}</button>
-                <button class="btn ghost small" data-act="del">${esc(t("del"))}</button>
+                <button class="btn small" data-act="save">${esc(t("gSave"))}</button>
+                <button class="btn ghost small" data-act="del">${esc(t("gDelete"))}</button>
               </div>
             </article>`).join("")}
         </div>
@@ -94,30 +97,24 @@
   function download(it) {
     const a = document.createElement("a");
     a.href = it.url;
-    const stamp = it.createdAt.slice(0, 16).replace(/[-:T]/g, "");
-    a.download = `scoops-spokes-${it.receiptId || stamp}.jpg`;
+    a.download = `scoops-spokes-${it.receiptId || it.createdAt.slice(0, 16).replace(/[-:T]/g, "")}.jpg`;
     a.click();
   }
 
-  $("#g-days").addEventListener("click", async (e) => {
-    const btn = e.target.closest("[data-act]");
-    if (!btn) return;
-    const id = btn.closest(".g-card").dataset.id;
-    const it = items.find((x) => x.id === id);
-    if (!it) return;
-    if (btn.dataset.act === "save") download(it);
-    if (btn.dataset.act === "open") openShow(items.indexOf(it));
-    if (btn.dataset.act === "del" && confirm(t("confirmOne"))) {
-      await window.SSGallery.remove(id);
-      load();
-    }
-  });
-
-  $("#btn-clear").onclick = async () => {
-    if (!confirm(t("confirmAll", { n: items.length }))) return;
-    await window.SSGallery.clear();
+  /* ---------- open / close the panel ---------- */
+  function open() {
+    wire();
+    $("#gallery-panel").hidden = false;
+    document.body.classList.add("gallery-open");
+    $("#gallery-panel").scrollTop = 0;
     load();
-  };
+  }
+  function close() {
+    closeShow();
+    $("#gallery-panel").hidden = true;
+    document.body.classList.remove("gallery-open");
+    if (location.hash === "#gallery") history.replaceState(null, "", location.pathname + location.search);
+  }
 
   /* ---------- slideshow (for the projector) ---------- */
   let idx = 0, timer = null;
@@ -131,36 +128,56 @@
     const d = new Date(it.createdAt);
     $("#ss-cap").textContent = `${fmtDate(d)} · ${timeOf(d)}   (${idx + 1}/${items.length})`;
   }
+  const restart = () => { clearInterval(timer); timer = setInterval(() => showSlide(idx + 1), 4000); };
   function openShow(start = 0) {
     if (!items.length) return;
     $("#slideshow").hidden = false;
     showSlide(start);
-    clearInterval(timer);
-    timer = setInterval(() => showSlide(idx + 1), 4000);
+    restart();
     $("#slideshow").requestFullscreen?.().catch(() => {});
   }
   function closeShow() {
     clearInterval(timer);
+    if ($("#slideshow").hidden) return;
     $("#slideshow").hidden = true;
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   }
-  const restart = () => { clearInterval(timer); timer = setInterval(() => showSlide(idx + 1), 4000); };
-  $("#btn-slideshow").onclick = () => openShow(0);
-  $("#ss-close").onclick = closeShow;
-  $("#ss-next").onclick = () => { showSlide(idx + 1); restart(); };
-  $("#ss-prev").onclick = () => { showSlide(idx - 1); restart(); };
-  document.addEventListener("keydown", (e) => {
-    if ($("#slideshow").hidden) return;
-    if (e.key === "Escape") closeShow();
-    if (e.key === "ArrowRight" || e.key === " ") { showSlide(idx + 1); restart(); }
-    if (e.key === "ArrowLeft") { showSlide(idx - 1); restart(); }
-  });
-  document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && !$("#slideshow").hidden) closeShow(); });
 
-  // refresh when a new strip is taken in another tab
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+  function wire() {
+    if (wired) return;
+    wired = true;
+    $("#g-days").addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      const it = items.find((x) => x.id === btn.closest(".g-card").dataset.id);
+      if (!it) return;
+      if (btn.dataset.act === "save") download(it);
+      if (btn.dataset.act === "open") openShow(items.indexOf(it));
+      if (btn.dataset.act === "del" && confirm(t("confirmOne"))) { await window.SSGallery.remove(it.id); load(); }
+    });
+    $("#btn-clear").onclick = async () => {
+      if (!confirm(t("confirmAll", { n: items.length }))) return;
+      await window.SSGallery.clear();
+      load();
+    };
+    $("#btn-gallery-close").onclick = close;
+    $("#btn-go-booth").onclick = close;
+    $("#btn-slideshow").onclick = () => openShow(0);
+    $("#ss-close").onclick = closeShow;
+    $("#ss-next").onclick = () => { showSlide(idx + 1); restart(); };
+    $("#ss-prev").onclick = () => { showSlide(idx - 1); restart(); };
+    document.addEventListener("keydown", (e) => {
+      if (!$("#slideshow").hidden) {
+        if (e.key === "Escape") closeShow();
+        if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); showSlide(idx + 1); restart(); }
+        if (e.key === "ArrowLeft") { showSlide(idx - 1); restart(); }
+      } else if (!$("#gallery-panel").hidden && e.key === "Escape") close();
+    });
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && !$("#slideshow").hidden) closeShow();
+    });
+    window.SSi18n.onChange(render);
+  }
 
-  window.SSi18n.onChange(render);
-  window.SSi18n.init(DICT);
-  load();
+  window.SSGalleryUI = { DICT, open, close, refresh: () => { if (!$("#gallery-panel").hidden) load(); } };
 })();
