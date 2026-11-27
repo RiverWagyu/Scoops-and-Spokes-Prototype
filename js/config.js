@@ -39,15 +39,22 @@ window.SS_CONFIG = {
   // receipt's fortune changes. (Prototype only — not real security.)
   secret: "scoops-spokes-salaya-2026",
 
-  // Menu, from the shop's drinks board. "float" = price with a gelato float on top.
+  // Menu, from the shop's ice cream + drinks boards.
+  //   float: price with a gelato float on top   cone: extra for a freshly made cone
   menuCategories: [
+    { id: "icecream", name: { en: "Ice Cream",                   th: "ไอศกรีม" } },
     { id: "soda",     name: { en: "Soda",                        th: "โซดา" } },
     { id: "tea",      name: { en: "Tea",                         th: "ชา" } },
     { id: "nitro",    name: { en: "Coffee · Nitro (no ice)",     th: "กาแฟไนโตร ไม่ใส่น้ำแข็ง" } },
-    { id: "coldbrew", name: { en: "Coffee · Cold Brew on Ice",   th: "กาแฟสกัดเย็น" } },
-    { id: "gelato",   name: { en: "Gelato (prices to confirm)",  th: "เจลาโต้ (รอยืนยันราคา)" } }
+    { id: "coldbrew", name: { en: "Coffee · Cold Brew on Ice",   th: "กาแฟสกัดเย็น" } }
   ],
   menu: [
+    // Ice cream (cup, or freshly made cone +25)
+    { id: "classic", cat: "icecream", name: { en: "Classic Cup O' Scoop + tiny scoop", th: "ถ้วยคลาสสิก 1 สกู๊ป + สกู๊ปจิ๋ว" }, price: 88,  cone: 25 },
+    { id: "junior2", cat: "icecream", name: { en: "2 Junior Scoops + tiny scoop",      th: "2 สกู๊ปจูเนียร์ + สกู๊ปจิ๋ว" },    price: 138, cone: 25 },
+    { id: "full2",   cat: "icecream", name: { en: "2 Full Scoops + tiny scoop",        th: "2 สกู๊ปเต็ม + สกู๊ปจิ๋ว" },       price: 158, cone: 25 },
+    { id: "home",    cat: "icecream", name: { en: "Classic Cup O' Home (take-home, lidded)", th: "ถ้วยปิดฝากลับบ้าน" },     price: 88 },
+    { id: "shake",   cat: "icecream", name: { en: "Milk Shake",                         th: "มิลค์เชค" },                      price: 188 },
     // Soda
     { id: "melon", cat: "soda", name: { en: "Melon Soda",  th: "เมล่อนโซดา" },    price: 89, float: 118 },
     { id: "peach", cat: "soda", name: { en: "Peach Soda",  th: "พีชโซดา" },       price: 89, float: 118 },
@@ -65,11 +72,7 @@ window.SS_CONFIG = {
     // Coffee – Cold brew on ice (float +40)
     { id: "clight", cat: "coldbrew", name: { en: "Light Roast",       th: "กาแฟสกัดเย็น คั่วอ่อน" },      price: 98, float: 138 },
     { id: "cmdark", cat: "coldbrew", name: { en: "Medium-Dark Roast", th: "กาแฟสกัดเย็น คั่วกลาง-เข้ม" }, price: 78, float: 118 },
-    { id: "cmed",   cat: "coldbrew", name: { en: "Medium Roast",      th: "กาแฟสกัดเย็น คั่วกลาง" },      price: 78, float: 118 },
-    // Gelato – placeholder prices until the real gelato menu is added
-    { id: "g1", cat: "gelato", name: { en: "Gelato · 1 scoop",  th: "เจลาโต้ 1 สกู๊ป" }, price: 79 },
-    { id: "g2", cat: "gelato", name: { en: "Gelato · 2 scoops", th: "เจลาโต้ 2 สกู๊ป" }, price: 129 },
-    { id: "g3", cat: "gelato", name: { en: "Gelato · 3 scoops", th: "เจลาโต้ 3 สกู๊ป" }, price: 169 }
+    { id: "cmed",   cat: "coldbrew", name: { en: "Medium Roast",      th: "กาแฟสกัดเย็น คั่วกลาง" },      price: 78, float: 118 }
   ],
 
   payments: [

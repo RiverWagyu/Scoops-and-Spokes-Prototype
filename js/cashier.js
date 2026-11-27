@@ -11,6 +11,8 @@
       cashierTag: "Cashier · Salaya",
       plain: "Plain",
       float: "Float",
+      cup: "Cup",
+      cone: "Cone +25",
       checkCoupon: "Check coupon",
       classQr: "Class demo QR",
       shareOnline: "Share to the online gallery (customer agrees)",
@@ -84,6 +86,8 @@
       cashierTag: "แคชเชียร์ · ศาลายา",
       plain: "ธรรมดา",
       float: "โฟลต",
+      cup: "ถ้วย",
+      cone: "โคน +25",
       checkCoupon: "ตรวจคูปอง",
       classQr: "QR เดโมในห้อง",
       shareOnline: "แชร์ไปที่แกลเลอรีออนไลน์ (ลูกค้ายินยอม)",
@@ -188,14 +192,14 @@
       const grid = document.createElement("div");
       grid.className = "menu-grid";
       items.forEach((m) => {
-        if (m.float) {
-          // drink with Plain / Float choice
+        const opts = optionsOf(m);
+        if (opts) {
+          // two-way choice: Plain / Float for drinks, Cup / Cone for ice cream
           const card = document.createElement("div");
           card.className = "menu-item has-opts";
           card.innerHTML = `<span class="n"></span>
-            <span class="opts">
-              <button class="opt" data-k="${m.id}"><small>${esc(t("plain"))}</small>${baht(m.price)}</button>
-              <button class="opt float" data-k="${m.id}:float"><small>${esc(t("float"))}</small>${baht(m.float)}</button>
+            <span class="opts">${opts.map((o, i) => `
+              <button class="opt${i ? " alt" : ""}" data-k="${m.id}${o.key ? ":" + o.key : ""}"><small>${esc(t(o.label))}</small>${baht(o.price)}</button>`).join("")}
             </span>`;
           card.querySelector(".n").textContent = pick(m.name);
           card.querySelectorAll(".opt").forEach((b) => (b.onclick = () => add(b.dataset.k)));
@@ -223,17 +227,28 @@
     });
   }
 
-  // cart keys: "melon" (plain) or "melon:float"
+  // Items with a two-way choice. key "" = the basic version.
+  function optionsOf(m) {
+    if (m.float) return [
+      { key: "", label: "plain", price: m.price },
+      { key: "float", label: "float", price: m.float, suffix: { en: "Float", th: "โฟลต" } }];
+    if (m.cone) return [
+      { key: "", label: "cup", price: m.price },
+      { key: "cone", label: "cone", price: m.price + m.cone, suffix: { en: "Cone", th: "โคน" } }];
+    return null;
+  }
+
+  // cart keys: "melon" (basic) or "melon:float" / "classic:cone"
   function cartLines() {
     return Object.entries(state.cart).filter(([, q]) => q > 0).map(([key, qty]) => {
-      const [id, opt] = key.split(":");
+      const [id, optKey = ""] = key.split(":");
       const m = cfg.menu.find((x) => x.id === id);
       if (!m) return null;
-      const isFloat = opt === "float";
+      const o = (optionsOf(m) || []).find((x) => x.key === optKey);
       return {
         id: key, qty,
-        price: isFloat ? m.float : m.price,
-        name: isFloat ? { en: `${m.name.en} · Float`, th: `${m.name.th} · โฟลต` } : m.name
+        price: o ? o.price : m.price,
+        name: o?.suffix ? { en: `${m.name.en} · ${o.suffix.en}`, th: `${m.name.th} · ${o.suffix.th}` } : m.name
       };
     }).filter(Boolean);
   }

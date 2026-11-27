@@ -69,8 +69,8 @@ body { background: var(--olive-lt); min-height: 100vh; }
 .opt small { font-family: var(--font-body); font-weight: 400; font-size: .68rem; color: var(--muted); }
 .opt:hover { background: var(--mustard-lt); }
 .opt:active { transform: scale(.95); }
-.opt.float { background: #FBEBD2; border-color: var(--orange); color: #A4501B; }
-.opt.float:hover { background: var(--mustard-lt); }
+.opt.alt { background: #FBEBD2; border-color: var(--orange); color: #A4501B; }
+.opt.alt:hover { background: var(--mustard-lt); }
 .menu-item {
   text-align: left; border: 2px solid var(--green); background: var(--cream); color: var(--ink);
   border-radius: 14px; padding: 10px 12px; min-height: 64px;
