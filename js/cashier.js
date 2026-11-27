@@ -9,6 +9,8 @@
   const DICT = {
     en: {
       cashierTag: "Cashier · Salaya",
+      plain: "Plain",
+      float: "Float",
       checkCoupon: "Check coupon",
       classQr: "Class demo QR",
       shareOnline: "Share to the online gallery (customer agrees)",
@@ -80,6 +82,8 @@
     },
     th: {
       cashierTag: "แคชเชียร์ · ศาลายา",
+      plain: "ธรรมดา",
+      float: "โฟลต",
       checkCoupon: "ตรวจคูปอง",
       classQr: "QR เดโมในห้อง",
       shareOnline: "แชร์ไปที่แกลเลอรีออนไลน์ (ลูกค้ายินยอม)",
@@ -170,13 +174,42 @@
   function renderMenu() {
     const box = $("#menu");
     box.innerHTML = "";
-    cfg.menu.forEach((m) => {
-      const b = document.createElement("button");
-      b.className = "menu-item";
-      b.innerHTML = `<span class="n"></span><span class="p">${baht(m.price)}</span>`;
-      b.querySelector(".n").textContent = pick(m.name);
-      b.onclick = () => { state.cart[m.id] = (state.cart[m.id] || 0) + 1; renderCart(); };
-      box.appendChild(b);
+    const add = (key) => { state.cart[key] = (state.cart[key] || 0) + 1; renderCart(); };
+    const cats = cfg.menuCategories || [{ id: undefined, name: "" }];
+    cats.forEach((c) => {
+      const items = cfg.menu.filter((m) => m.cat === c.id);
+      if (!items.length) return;
+      if (c.name) {
+        const h = document.createElement("h3");
+        h.className = "menu-cat";
+        h.textContent = pick(c.name);
+        box.appendChild(h);
+      }
+      const grid = document.createElement("div");
+      grid.className = "menu-grid";
+      items.forEach((m) => {
+        if (m.float) {
+          // drink with Plain / Float choice
+          const card = document.createElement("div");
+          card.className = "menu-item has-opts";
+          card.innerHTML = `<span class="n"></span>
+            <span class="opts">
+              <button class="opt" data-k="${m.id}"><small>${esc(t("plain"))}</small>${baht(m.price)}</button>
+              <button class="opt float" data-k="${m.id}:float"><small>${esc(t("float"))}</small>${baht(m.float)}</button>
+            </span>`;
+          card.querySelector(".n").textContent = pick(m.name);
+          card.querySelectorAll(".opt").forEach((b) => (b.onclick = () => add(b.dataset.k)));
+          grid.appendChild(card);
+        } else {
+          const b = document.createElement("button");
+          b.className = "menu-item";
+          b.innerHTML = `<span class="n"></span><span class="p">${baht(m.price)}</span>`;
+          b.querySelector(".n").textContent = pick(m.name);
+          b.onclick = () => add(m.id);
+          grid.appendChild(b);
+        }
+      });
+      box.appendChild(grid);
     });
     const chips = $("#payments");
     chips.innerHTML = "";
@@ -190,8 +223,19 @@
     });
   }
 
+  // cart keys: "melon" (plain) or "melon:float"
   function cartLines() {
-    return cfg.menu.filter((m) => state.cart[m.id] > 0).map((m) => ({ ...m, qty: state.cart[m.id] }));
+    return Object.entries(state.cart).filter(([, q]) => q > 0).map(([key, qty]) => {
+      const [id, opt] = key.split(":");
+      const m = cfg.menu.find((x) => x.id === id);
+      if (!m) return null;
+      const isFloat = opt === "float";
+      return {
+        id: key, qty,
+        price: isFloat ? m.float : m.price,
+        name: isFloat ? { en: `${m.name.en} · Float`, th: `${m.name.th} · โฟลต` } : m.name
+      };
+    }).filter(Boolean);
   }
   const cartTotal = (lines) => lines.reduce((s, l) => s + l.qty * l.price, 0);
 

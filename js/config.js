@@ -39,17 +39,37 @@ window.SS_CONFIG = {
   // receipt's fortune changes. (Prototype only — not real security.)
   secret: "scoops-spokes-salaya-2026",
 
-  // Placeholder menu — replace with the real items and prices.
+  // Menu, from the shop's drinks board. "float" = price with a gelato float on top.
+  menuCategories: [
+    { id: "soda",     name: { en: "Soda",                        th: "โซดา" } },
+    { id: "tea",      name: { en: "Tea",                         th: "ชา" } },
+    { id: "nitro",    name: { en: "Coffee · Nitro (no ice)",     th: "กาแฟไนโตร ไม่ใส่น้ำแข็ง" } },
+    { id: "coldbrew", name: { en: "Coffee · Cold Brew on Ice",   th: "กาแฟสกัดเย็น" } },
+    { id: "gelato",   name: { en: "Gelato (prices to confirm)",  th: "เจลาโต้ (รอยืนยันราคา)" } }
+  ],
   menu: [
-    { id: "g1", name: { en: "Gelato · 1 scoop",   th: "เจลาโต้ 1 สกู๊ป" },  price: 79 },
-    { id: "g2", name: { en: "Gelato · 2 scoops",  th: "เจลาโต้ 2 สกู๊ป" },  price: 129 },
-    { id: "g3", name: { en: "Gelato · 3 scoops",  th: "เจลาโต้ 3 สกู๊ป" },  price: 169 },
-    { id: "af", name: { en: "Nitro Affogato",     th: "อัฟโฟกาโต้ไนโตร" }, price: 139 },
-    { id: "nc", name: { en: "Nitro Cold Brew",    th: "ไนโตรโคลด์บรูว์" },  price: 99 },
-    { id: "mf", name: { en: "Matcha Float",       th: "มัทฉะโฟลต" },       price: 145 },
-    { id: "su", name: { en: "Sundae Cup",         th: "ซันเดย์ถ้วย" },       price: 168 },
-    { id: "ct", name: { en: "Caramel Toast",      th: "คาราเมลโทสต์" },     price: 119 },
-    { id: "wc", name: { en: "Waffle cone add-on", th: "เพิ่มโคนวาฟเฟิล" },   price: 20 }
+    // Soda
+    { id: "melon", cat: "soda", name: { en: "Melon Soda",  th: "เมล่อนโซดา" },    price: 89, float: 118 },
+    { id: "peach", cat: "soda", name: { en: "Peach Soda",  th: "พีชโซดา" },       price: 89, float: 118 },
+    { id: "yuzu",  cat: "soda", name: { en: "Yuzu Soda",   th: "ยูสุโซดา" },       price: 89, float: 118 },
+    { id: "cola",  cat: "soda", name: { en: "Cola / Root Beer", th: "โคล่า/รูทเบียร์" }, price: 45, float: 85 },
+    // Tea (float +40)
+    { id: "mlatte", cat: "tea", name: { en: "Matcha Latte",   th: "มัจฉะลาเต้" },         price: 98, float: 138 },
+    { id: "mcoco",  cat: "tea", name: { en: "Matcha Coconut", th: "มัจฉะน้ำมะพร้าวสด" },  price: 98, float: 138 },
+    { id: "mclear", cat: "tea", name: { en: "Clear Matcha",   th: "มัจฉะใส" },            price: 78, float: 118 },
+    { id: "thai",   cat: "tea", name: { en: "Thai Tea Fresh Milk Coconut", th: "ชาไทยมะพร้าวนมสด" }, price: 78, float: 118 },
+    // Coffee – Nitro, no ice (float +40)
+    { id: "nlatte", cat: "nitro", name: { en: "Nitro Latte",     th: "ไนโตรลาเต้" },              price: 148, float: 188 },
+    { id: "ncoco",  cat: "nitro", name: { en: "Nitro Coconut",   th: "กาแฟน้ำมะพร้าวสดไนโตร" },  price: 148, float: 188 },
+    { id: "ncold",  cat: "nitro", name: { en: "Nitro Cold Brew", th: "กาแฟไนโตร สกัดเย็น" },      price: 128, float: 168 },
+    // Coffee – Cold brew on ice (float +40)
+    { id: "clight", cat: "coldbrew", name: { en: "Light Roast",       th: "กาแฟสกัดเย็น คั่วอ่อน" },      price: 98, float: 138 },
+    { id: "cmdark", cat: "coldbrew", name: { en: "Medium-Dark Roast", th: "กาแฟสกัดเย็น คั่วกลาง-เข้ม" }, price: 78, float: 118 },
+    { id: "cmed",   cat: "coldbrew", name: { en: "Medium Roast",      th: "กาแฟสกัดเย็น คั่วกลาง" },      price: 78, float: 118 },
+    // Gelato – placeholder prices until the real gelato menu is added
+    { id: "g1", cat: "gelato", name: { en: "Gelato · 1 scoop",  th: "เจลาโต้ 1 สกู๊ป" }, price: 79 },
+    { id: "g2", cat: "gelato", name: { en: "Gelato · 2 scoops", th: "เจลาโต้ 2 สกู๊ป" }, price: 129 },
+    { id: "g3", cat: "gelato", name: { en: "Gelato · 3 scoops", th: "เจลาโต้ 3 สกู๊ป" }, price: 169 }
   ],
 
   payments: [

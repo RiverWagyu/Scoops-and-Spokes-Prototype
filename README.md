@@ -31,7 +31,7 @@ Click **Print**. Page 1 is the front and page 2 is the photo side. Turn on **two
 Everything lives in **`js/config.js`**:
 - `mascotSrc` — the dino mascot (`assets/mascot.png`), cut out of the shop's profile picture (`assets/mascot-original.jpg`). If you get the original high-res file from the shop, drop it in `assets/` and point this at it.
 - The "&" logo (`assets/amp-mark.svg`) and the SC◎◎PS & SP◎KES wordmark are redrawn copies of the shop's logo. Swap in the official files if you get them.
-- `menu` — item names (TH/EN) and prices. **These are placeholders. Swap in the real menu.**
+- `menu` — drinks from the shop board (Plain + Float prices) and gelato (placeholder prices, to confirm). `menuCategories` sets the sections.
 - `luckyChance` — `0.25` = 25% of receipts are lucky.
 - `prizes` — wheel prizes and their weights (now 45 / 30 / 15 / 10).
 - `couponValidDays` — coupon lifetime (now 14 days, to bring customers back).
