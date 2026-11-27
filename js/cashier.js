@@ -11,6 +11,10 @@
       cashierTag: "Cashier · Salaya",
       checkCoupon: "Check coupon",
       classQr: "Class demo QR",
+      shareOnline: "Share to the online gallery (customer agrees)",
+      sharedOnline: "✓ Shared to the online gallery",
+      sharing: "Uploading to the online gallery…",
+      shareFailed: "Couldn't upload to the online gallery. Check the internet connection.",
       classQrHelp: "Show this on the projector. Everyone who scans gets their own random draw (25% are lucky and spin the wheel).",
       settings: "Settings",
       stepOrder: "Order",
@@ -78,6 +82,10 @@
       cashierTag: "แคชเชียร์ · ศาลายา",
       checkCoupon: "ตรวจคูปอง",
       classQr: "QR เดโมในห้อง",
+      shareOnline: "แชร์ไปที่แกลเลอรีออนไลน์ (ลูกค้ายินยอม)",
+      sharedOnline: "✓ แชร์ไปที่แกลเลอรีออนไลน์แล้ว",
+      sharing: "กำลังอัปโหลดไปที่แกลเลอรีออนไลน์…",
+      shareFailed: "อัปโหลดไปที่แกลเลอรีออนไลน์ไม่สำเร็จ ตรวจสอบอินเทอร์เน็ต",
       classQrHelp: "เปิดขึ้นจอโปรเจกเตอร์ ทุกคนที่สแกนจะได้เสี่ยงเซียมซีของตัวเอง (25% ได้หมุนวงล้อ)",
       settings: "ตั้งค่า",
       stepOrder: "รายการสั่ง",
@@ -305,6 +313,7 @@
         window.SSGalleryUI?.refresh();
       } catch (e) { console.warn("Couldn't save to gallery", e); }
     }
+    if (state.receipt) shareOnline();
     if (state.receipt) { state.receipt.stripUrl = state.stripUrl; renderBack(); }
   }
 
@@ -501,6 +510,7 @@
     }
     if (state.stripId) window.SSGallery?.update(state.stripId, { receiptId: id }).catch(() => {});
     renderReceipt();
+    shareOnline();
     $("#flip").classList.remove("flipped");
   }
 
@@ -519,6 +529,7 @@
     state.photos = [];
     state.stripUrl = null;
     state.stripId = null;
+    state.sharedUrl = null;
     state.receipt = null;
     renderCart();
     renderThumbs();
@@ -537,6 +548,24 @@
     a.href = r.stripUrl;
     a.download = `scoops-spokes-${r.id}.jpg`;
     a.click();
+  }
+
+  /* ---------------- online gallery ---------------- */
+  // Upload the final strip once its receipt exists (retakes after that upload too).
+  async function shareOnline() {
+    if (!window.SSOnline?.enabled() || !$("#share-online").checked) return;
+    if (!state.stripUrl || !state.receipt || state.sharedUrl === state.stripUrl) return;
+    const url = state.stripUrl;
+    state.sharedUrl = url;
+    msg(t("sharing"));
+    try {
+      await window.SSOnline.upload({ dataUrl: url, receiptId: state.receipt.id });
+      if (state.stripUrl === url) msg(t("sharedOnline"));
+    } catch (e) {
+      console.warn("Online upload failed", e);
+      state.sharedUrl = null;
+      msg(t("shareFailed"));
+    }
   }
 
   /* ---------------- settings ---------------- */
@@ -679,6 +708,12 @@
   $("#btn-coupon").onclick = () => { $("#coupon-result").innerHTML = ""; $("#coupon-id").value = ""; $("#dlg-coupon").showModal(); };
   $("#coupon-check").onclick = checkCoupon;
   $("#coupon-id").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); checkCoupon(); } });
+
+  // online sharing tick box
+  if (window.SSOnline?.enabled()) {
+    $("#share-opt").hidden = false;
+    $("#share-online").checked = cfg.shareOnlineDefault !== false;
+  }
 
   // gallery panel (same page)
   if (window.SSGalleryUI) {

@@ -44,3 +44,16 @@ The 28 fortune sticks (TH + EN) are in `js/fortunes.js`.
 - There is no server or database. "Used" coupons are remembered only on the cashier device, in the browser's storage.
 - Fortunes are worked out in the browser, so someone technical could predict them. That's fine for a class prototype, but a real launch would need a small backend.
 - The QR code library loads from the internet (jsDelivr), and so do the fonts.
+
+## Online photo gallery (Firebase)
+By default the **Gallery** (cashier page → Gallery) shows strips saved on *this device only*.
+To share them across every device, connect a free Firebase project:
+
+1. Go to **https://console.firebase.google.com** → **Create a project** (e.g. `scoops-spokes`). Google Analytics can be turned off.
+2. Left menu → **Build → Firestore Database → Create database** → location **asia-southeast1 (Singapore)** → **Start in production mode** → Create.
+3. Open the **Rules** tab, replace everything with the contents of `firestore.rules`, click **Publish**.
+4. ⚙️ **Project settings → General → Your apps → `</>` (Web)** → any nickname → **Register app** (no hosting needed).
+5. Copy the `firebaseConfig = { ... }` values into `js/config.js` → `firebase: { apiKey: "...", authDomain: "...", projectId: "...", storageBucket: "...", messagingSenderId: "...", appId: "..." }`.
+
+Then every strip uploads when its receipt is created (if **Share to the online gallery** is ticked — on by default, set `shareOnlineDefault` in `js/config.js`), and the Gallery shows all devices' strips live.
+Uses Firestore only (free Spark plan, no card needed). The web `apiKey` is not a secret — Firebase web configs are public by design; the rules in `firestore.rules` decide what's allowed.

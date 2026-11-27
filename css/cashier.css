@@ -141,6 +141,8 @@ body { background: var(--olive-lt); min-height: 100vh; }
 .thumb.filled { border: 2px solid var(--green); }
 .booth-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
 .upload { cursor: pointer; }
+.share-opt { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: .9rem; cursor: pointer; }
+.share-opt input { width: 18px; height: 18px; accent-color: var(--green); }
 
 /* Receipt panel */
 .receipt-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }

@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// Scoops & Spokes online photo gallery.
+// Paste this into Firebase console → Firestore Database → Rules → Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Gallery list: small thumbnail + time + receipt number
+    match /strips/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['createdAt', 'receiptId', 'thumb'])
+                    && request.resource.data.createdAt == request.time
+                    && request.resource.data.thumb is string
+                    && request.resource.data.thumb.size() < 100000
+                    && (request.resource.data.receiptId == null || request.resource.data.receiptId is string);
+      allow delete: if true;
+      allow update: if false;
+    }
+
+    // Full-size strip, loaded when someone saves it or watches the slideshow
+    match /stripImages/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['image'])
+                    && request.resource.data.image is string
+                    && request.resource.data.image.size() < 1000000;
+      allow delete: if true;
+      allow update: if false;
+    }
+
+    // Everything else is closed
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

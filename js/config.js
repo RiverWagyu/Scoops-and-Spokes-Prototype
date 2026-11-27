@@ -58,6 +58,22 @@ window.SS_CONFIG = {
     { id: "card", label: { en: "Card", th: "บัตร" } }
   ],
 
+  // Online gallery (Firebase Firestore). Paste your Firebase web-app config
+  // here to share photo strips across every device, e.g.
+  //   firebase: { apiKey: "...", authDomain: "...", projectId: "...", appId: "..." },
+  // Leave as null to keep photos on this device only.
+  firebase: {
+    apiKey: "AIzaSyC_lZHnkVFcPyDnvEWFtpSwcPb3AgqGvt8",
+    authDomain: "scoops-and-spookes.firebaseapp.com",
+    projectId: "scoops-and-spookes",
+    storageBucket: "scoops-and-spookes.firebasestorage.app",
+    messagingSenderId: "67226430431",
+    appId: "1:67226430431:web:475ba4d067e2e629d9b26a"
+  },
+
+  // Is "Share to the online gallery" ticked by default in the photo booth?
+  shareOnlineDefault: true,
+
   // Where the QR code on the receipt points. Leave "" to use the same
   // address the cashier page is open on. Can also be changed on the
   // cashier page under "Settings".

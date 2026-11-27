@@ -25,7 +25,10 @@
       gReceipt: "Receipt",
       noReceipt: "No receipt yet",
       emptyText: "No photos yet. Every strip taken in the photo booth will show up here.",
-      goBooth: "Go to the photo booth"
+      goBooth: "Go to the photo booth",
+      onlineNote: "🌐 Online gallery: photo strips from every device, updating live.",
+      onlineError: "Couldn't load the online gallery. Check the internet connection and the Firebase settings.",
+      confirmAllOnline: "Delete ALL {n} photo strips from the ONLINE gallery, for every device? This can't be undone."
     },
     th: {
       gallery: "แกลเลอรี",
@@ -44,18 +47,39 @@
       gReceipt: "ใบเสร็จ",
       noReceipt: "ยังไม่ได้ออกใบเสร็จ",
       emptyText: "ยังไม่มีภาพ ทุกภาพที่ถ่ายในโฟโต้บูธจะแสดงที่นี่",
-      goBooth: "ไปที่โฟโต้บูธ"
+      goBooth: "ไปที่โฟโต้บูธ",
+      onlineNote: "🌐 แกลเลอรีออนไลน์: ภาพจากทุกเครื่อง อัปเดตทันที",
+      onlineError: "โหลดแกลเลอรีออนไลน์ไม่ได้ ตรวจสอบอินเทอร์เน็ตและการตั้งค่า Firebase",
+      confirmAllOnline: "ลบภาพทั้งหมด {n} ภาพจากแกลเลอรีออนไลน์ สำหรับทุกเครื่อง? ลบแล้วกู้คืนไม่ได้"
     }
   };
 
   let items = [];          // [{ id, receiptId, createdAt, blob, url }]
   let wired = false;
 
+  const online = () => !!window.SSOnline?.enabled();
+  let unlisten = null;
+
   async function load() {
+    if (online()) {
+      if (unlisten) return;                                   // already listening live
+      unlisten = window.SSOnline.listen((list) => { items = list; render(); }, (err) => {
+        console.warn(err);
+        $("#g-count").textContent = t("onlineError");
+      });
+      return;
+    }
     items.forEach((it) => URL.revokeObjectURL(it.url));
     const list = await window.SSGallery.all();
     items = list.map((r) => ({ ...r, url: URL.createObjectURL(r.blob) }));
     render();
+  }
+
+  async function fullUrl(it) {
+    return it.online ? (await window.SSOnline.full(it.id)) || it.url : it.url;
+  }
+  async function removeItem(it) {
+    if (it.online) await window.SSOnline.remove(it.id); else await window.SSGallery.remove(it.id);
   }
 
   const timeOf = (d) =>
@@ -68,6 +92,7 @@
     $("#btn-clear").hidden = n === 0;
     $("#btn-slideshow").disabled = n === 0;
     $("#g-empty").hidden = n > 0;
+    document.querySelector("#gallery-panel .g-note").textContent = t(online() ? "onlineNote" : "deviceNote");
 
     const days = new Map();
     items.forEach((it) => {
@@ -94,9 +119,9 @@
       </section>`).join("");
   }
 
-  function download(it) {
+  async function download(it) {
     const a = document.createElement("a");
-    a.href = it.url;
+    a.href = await fullUrl(it);
     a.download = `scoops-spokes-${it.receiptId || it.createdAt.slice(0, 16).replace(/[-:T]/g, "")}.jpg`;
     a.click();
   }
@@ -111,6 +136,7 @@
   }
   function close() {
     closeShow();
+    unlisten?.(); unlisten = null;
     $("#gallery-panel").hidden = true;
     document.body.classList.remove("gallery-open");
     if (location.hash === "#gallery") history.replaceState(null, "", location.pathname + location.search);
@@ -125,6 +151,7 @@
     const img = $("#ss-img");
     img.style.animation = "none"; void img.offsetWidth; img.style.animation = "";
     img.src = it.url;
+    if (it.online) fullUrl(it).then((u) => { if (items[idx] === it) img.src = u; });
     const d = new Date(it.createdAt);
     $("#ss-cap").textContent = `${fmtDate(d)} · ${timeOf(d)}   (${idx + 1}/${items.length})`;
   }
@@ -153,12 +180,12 @@
       if (!it) return;
       if (btn.dataset.act === "save") download(it);
       if (btn.dataset.act === "open") openShow(items.indexOf(it));
-      if (btn.dataset.act === "del" && confirm(t("confirmOne"))) { await window.SSGallery.remove(it.id); load(); }
+      if (btn.dataset.act === "del" && confirm(t("confirmOne"))) { await removeItem(it); if (!online()) load(); }
     });
     $("#btn-clear").onclick = async () => {
-      if (!confirm(t("confirmAll", { n: items.length }))) return;
-      await window.SSGallery.clear();
-      load();
+      if (!confirm(t(online() ? "confirmAllOnline" : "confirmAll", { n: items.length }))) return;
+      if (online()) await Promise.all(items.map((it) => window.SSOnline.remove(it.id)));
+      else { await window.SSGallery.clear(); load(); }
     };
     $("#btn-gallery-close").onclick = close;
     $("#btn-go-booth").onclick = close;
