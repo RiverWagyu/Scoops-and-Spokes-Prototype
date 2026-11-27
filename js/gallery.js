@@ -89,7 +89,6 @@
     if ($("#gallery-panel").hidden) return;
     const n = items.length;
     $("#g-count").textContent = n === 0 ? t("count0") : n === 1 ? t("count1") : t("count", { n });
-    $("#btn-clear").hidden = n === 0;
     $("#btn-slideshow").disabled = n === 0;
     $("#g-empty").hidden = n > 0;
     document.querySelector("#gallery-panel .g-note").textContent = t(online() ? "onlineNote" : "deviceNote");
@@ -182,11 +181,6 @@
       if (btn.dataset.act === "open") openShow(items.indexOf(it));
       if (btn.dataset.act === "del" && confirm(t("confirmOne"))) { await removeItem(it); if (!online()) load(); }
     });
-    $("#btn-clear").onclick = async () => {
-      if (!confirm(t(online() ? "confirmAllOnline" : "confirmAll", { n: items.length }))) return;
-      if (online()) await Promise.all(items.map((it) => window.SSOnline.remove(it.id)));
-      else { await window.SSGallery.clear(); load(); }
-    };
     $("#btn-gallery-close").onclick = close;
     $("#btn-go-booth").onclick = close;
     $("#btn-slideshow").onclick = () => openShow(0);
