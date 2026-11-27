@@ -372,9 +372,19 @@
       ctx.restore();
     });
     const fy = H - foot / 2 + 4;
-    ctx.fillStyle = "#D8CE66";
-    ctx.beginPath(); ctx.arc(pad + 18, fy - 2, 18, 0, 7); ctx.fill();
-    window.SSBrand.drawAmp(ctx, pad + 18, fy - 2, 24, "#506840");
+    // mascot badge
+    const bx = pad + 18, by = fy - 2, br = 18;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(bx, by, br, 0, 7); ctx.clip();
+    ctx.fillStyle = "#E8B840"; ctx.fillRect(bx - br, by - br, br * 2, br * 2);
+    try {
+      const m = await loadImg(cfg.mascotSrc);
+      const mw = br * 2 * 0.94, mh = mw * m.naturalHeight / m.naturalWidth;
+      // same framing as the CSS badge: background-position 47% 44%
+      const ox = (br * 2 - mw) * 0.47, oy = (br * 2 - mh) * 0.44;
+      ctx.drawImage(m, bx - br + ox, by - br + oy, mw, mh);
+    } catch {}
+    ctx.restore();
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#F7F1E1";
     ctx.textAlign = "left";
