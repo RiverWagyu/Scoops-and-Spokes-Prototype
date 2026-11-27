@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1F4D36">
+  <title>Scoops & Spokes · เซียมซี Daily Fortune</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/brand.css">
+  <link rel="stylesheet" href="css/fortune.css">
+</head>
+<body>
+  <header class="f-top">
+    <div class="f-brand">
+      <span class="amp-badge" style="--size:36px">&amp;</span>
+      <span class="wm" data-wm></span>
+    </div>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button data-lang-btn="th">TH</button>
+      <button data-lang-btn="en">EN</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- Shake -->
+    <section class="screen" id="s-intro">
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 data-i18n="introTitle"></h1>
+      <p class="sub" data-i18n="introSub"></p>
+
+      <div class="tube-wrap" id="tube-wrap">
+        <div class="stick-out" id="stick-out"><span id="stick-no"></span></div>
+        <div class="sticks" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="tube">
+          <span class="band"></span>
+          <div class="mascot-disc tube-mascot" style="--size:100px"><img src="" alt="" data-mascot></div>
+          <span class="tube-label" data-i18n="tubeLabel"></span>
+          <span class="band low"></span>
+        </div>
+      </div>
+
+      <button class="btn big green" id="btn-shake" data-i18n="shakeBtn"></button>
+      <p class="hint" id="shake-hint" data-i18n="shakeHint"></p>
+      <p class="receipt-no"><span data-i18n="receiptNo"></span> <b class="rid"></b></p>
+    </section>
+
+    <!-- Fortune result -->
+    <section class="screen" id="s-result" hidden>
+      <article class="slip" id="slip"></article>
+      <div class="result-cta" id="result-cta"></div>
+    </section>
+
+    <!-- Wheel -->
+    <section class="screen" id="s-wheel" hidden>
+      <p class="eyebrow" data-i18n="wheelEyebrow"></p>
+      <h1 data-i18n="wheelTitle"></h1>
+      <div class="wheel-box">
+        <div class="pointer" aria-hidden="true"></div>
+        <svg class="wheel" id="wheel" viewBox="-160 -160 320 320" role="img" aria-label="Prize wheel"></svg>
+        <button class="wheel-hub" id="btn-spin" data-i18n="spin"></button>
+      </div>
+      <p class="hint" data-i18n="wheelHint"></p>
+    </section>
+
+    <!-- Coupon -->
+    <section class="screen" id="s-coupon" hidden>
+      <div class="coupon" id="coupon"></div>
+      <button class="btn ghost small" id="btn-back-fortune" data-i18n="backToFortune"></button>
+    </section>
+
+    <!-- Bad link -->
+    <section class="screen" id="s-error" hidden>
+      <div class="mascot-disc err-mascot" style="--size:150px"><img src="" alt="" data-mascot></div>
+      <h1 data-i18n="errTitle"></h1>
+      <p class="sub" data-i18n="errText"></p>
+      <a class="btn" href="?demo=1" data-i18n="tryDemo"></a>
+    </section>
+  </main>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <script src="js/config.js"></script>
+  <script src="js/brand.js"></script>
+  <script src="js/fortunes.js"></script>
+  <script src="js/luck.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/fortune.js"></script>
+</body>
+</html>

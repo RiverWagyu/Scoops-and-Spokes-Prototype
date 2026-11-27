@@ -1,0 +1,160 @@
+/* Scoops & Spokes — shared brand styles */
+:root {
+  --green: #506840;
+  --green-dk: #3A4C2E;
+  --olive: #8E9A63;
+  --olive-lt: #C2C79A;
+  --mustard: #E8B840;
+  --lime: #D8CE66;
+  --mustard-lt: #F3D27E;
+  --cream: #F7F1E1;
+  --paper: #FFFDF7;
+  --orange: #E07B39;
+  --matcha: #A9BC6E;
+  --pink: #F2A7A0;
+  --ink: #1B2A22;
+  --muted: #5E6B5F;
+
+  --font-display: "Fredoka", "Mitr", system-ui, sans-serif;
+  --font-body: "Mitr", "Fredoka", system-ui, sans-serif;
+  --font-receipt: "IBM Plex Mono", "IBM Plex Sans Thai", ui-monospace, monospace;
+
+  --radius: 18px;
+  --shadow: 0 2px 0 rgba(58, 76, 46, .08), 0 12px 32px rgba(58, 76, 46, .12);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; cursor: pointer; }
+img { max-width: 100%; }
+
+/* Logo: the shop's "&" on a yellow disc */
+.amp-badge {
+  display: inline-block;
+  position: relative;
+  width: var(--size, 44px);
+  height: var(--size, 44px);
+  border-radius: 50%;
+  background: var(--lime);
+  font-size: 0;
+  color: transparent;
+  flex: none;
+}
+.amp-badge::before {
+  content: "";
+  position: absolute;
+  inset: 16% 22%;
+  background: var(--green);
+  -webkit-mask: url(../assets/amp-mark.svg) center / contain no-repeat;
+          mask: url(../assets/amp-mark.svg) center / contain no-repeat;
+}
+
+/* Wordmark: SC(oo)PS & SP(oo)KES — O's drawn as stacked wheels */
+.wm {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: .01em;
+  line-height: 1;
+  color: var(--green);
+}
+.wm .oo {
+  display: inline-block;
+  width: .4em;
+  height: .72em;
+  margin: 0 .04em;
+  --ring: radial-gradient(circle, currentColor 0 .045em, transparent .05em .085em, currentColor .09em .175em, transparent .18em);
+  background: var(--ring) 50% 0 / .36em .36em no-repeat, var(--ring) 50% 100% / .36em .36em no-repeat;
+}
+.wm .amp-i {
+  display: inline-block;
+  width: .56em;
+  height: .72em;
+  margin: 0 .22em;
+  background: currentColor;
+  -webkit-mask: url(../assets/amp-mark.svg) center / contain no-repeat;
+          mask: url(../assets/amp-mark.svg) center / contain no-repeat;
+}
+
+/* Mascot on a disc, cut off at the bottom like the shop's profile picture */
+.mascot-disc {
+  position: relative;
+  width: var(--size, 140px);
+  height: var(--size, 140px);
+  border-radius: 50%;
+  background: var(--mustard);
+  border: 4px solid var(--green);
+  overflow: hidden;
+  flex: none;
+}
+.mascot-disc img {
+  position: absolute;
+  left: 50%;
+  bottom: -2%;
+  width: 78%;
+  transform: translateX(-46%);
+}
+
+/* Chunky pill buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  border: 3px solid var(--green);
+  background: var(--mustard);
+  color: var(--green);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: .7em 1.3em;
+  border-radius: 999px;
+  box-shadow: 0 4px 0 var(--green);
+  text-decoration: none;
+  transition: transform .08s, box-shadow .08s, background .15s;
+}
+.btn:hover { background: var(--mustard-lt); }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green); }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 var(--green); }
+.btn.green { background: var(--green); color: var(--cream); }
+.btn.green:hover { background: #627D4F; }
+.btn.ghost { background: transparent; box-shadow: none; }
+.btn.ghost:hover { background: rgba(31, 77, 54, .08); }
+.btn.small { font-size: .85rem; padding: .45em .9em; border-width: 2px; box-shadow: 0 3px 0 var(--green); }
+.btn.big { font-size: 1.2rem; padding: .85em 1.8em; }
+
+/* TH | EN toggle */
+.lang-toggle {
+  display: inline-flex;
+  border: 2px solid var(--mustard);
+  border-radius: 999px;
+  overflow: hidden;
+  background: transparent;
+}
+.lang-toggle button {
+  border: 0;
+  background: transparent;
+  color: var(--cream);
+  opacity: .75;
+  font-family: var(--font-display);
+  font-weight: 600;
+  padding: .35em .9em;
+  min-width: 3em;
+}
+.lang-toggle button[aria-pressed="true"] { background: var(--mustard); color: var(--green); opacity: 1; }
+
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

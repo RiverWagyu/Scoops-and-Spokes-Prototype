@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scoops & Spokes · Cashier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Mitr:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/brand.css">
+  <link rel="stylesheet" href="css/cashier.css">
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="brand">
+      <span class="amp-badge" style="--size:46px">&amp;</span>
+      <div>
+        <span class="wm" data-wm></span>
+      </div>
+      <span class="tag" data-i18n="cashierTag"></span>
+    </div>
+    <div class="top-actions">
+      <button class="btn ghost small" id="btn-classqr" data-i18n="classQr"></button>
+      <button class="btn ghost small" id="btn-coupon" data-i18n="checkCoupon"></button>
+      <button class="btn ghost small" id="btn-settings" data-i18n="settings"></button>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button data-lang-btn="th">TH</button>
+        <button data-lang-btn="en">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- 1. ORDER -->
+    <section class="panel no-print" id="panel-order">
+      <h2><span class="step">1</span><span data-i18n="stepOrder"></span></h2>
+      <div class="menu-grid" id="menu"></div>
+      <div class="cart">
+        <div class="cart-empty" id="cart-empty" data-i18n="cartEmpty"></div>
+        <ul id="cart-list"></ul>
+        <div class="cart-total">
+          <span data-i18n="total"></span>
+          <strong id="cart-total">฿0</strong>
+        </div>
+        <div class="pay-row">
+          <span data-i18n="paidBy"></span>
+          <div class="chips" id="payments"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PHOTO BOOTH -->
+    <section class="panel no-print" id="panel-photo">
+      <h2><span class="step">2</span><span data-i18n="stepPhoto"></span></h2>
+      <div class="booth">
+        <div class="booth-stage" id="booth-stage">
+          <video id="video" playsinline muted></video>
+          <div class="booth-idle" id="booth-idle">
+            <div class="mascot-disc" style="--size:150px"><img src="" alt="" data-mascot></div>
+            <p data-i18n="boothIdle"></p>
+          </div>
+          <div class="booth-frame" aria-hidden="true">
+            <span class="gear g1"></span><span class="gear g2"></span>
+            <span class="booth-label"><span class="wm" data-wm></span></span>
+            <img src="" alt="" class="booth-sticker" data-mascot>
+          </div>
+          <div class="booth-shotcount" id="shot-count"></div>
+          <div class="countdown" id="countdown"></div>
+          <div class="flash" id="flash"></div>
+        </div>
+        <div class="thumbs" id="thumbs">
+          <div class="thumb"></div><div class="thumb"></div><div class="thumb"></div>
+        </div>
+        <div class="booth-actions">
+          <button class="btn green" id="btn-camera" data-i18n="startCamera"></button>
+          <button class="btn" id="btn-shoot" hidden data-i18n="takePhotos"></button>
+          <button class="btn ghost small" id="btn-retake" hidden data-i18n="retake"></button>
+          <label class="btn ghost small upload">
+            <span data-i18n="upload"></span>
+            <input type="file" id="file-input" accept="image/*" multiple hidden>
+          </label>
+        </div>
+        <p class="hint" id="camera-msg" role="status"></p>
+      </div>
+    </section>
+
+    <!-- 3. RECEIPT -->
+    <section class="panel" id="panel-receipt">
+      <h2 class="no-print"><span class="step">3</span><span data-i18n="stepReceipt"></span></h2>
+      <div class="receipt-actions no-print">
+        <button class="btn green" id="btn-create" data-i18n="createReceipt"></button>
+      </div>
+      <p class="warn no-print" id="url-warn" hidden></p>
+
+      <div class="flip" id="flip">
+        <div class="flip-inner">
+          <article class="receipt face front" id="receipt-front"></article>
+          <article class="receipt face back" id="receipt-back"></article>
+        </div>
+      </div>
+
+      <div class="receipt-actions no-print" id="after-actions" hidden>
+        <button class="btn small" id="btn-flip" data-i18n="flip"></button>
+        <button class="btn small green" id="btn-print" data-i18n="print"></button>
+        <button class="btn ghost small" id="btn-save" data-i18n="savePhoto"></button>
+        <a class="btn ghost small" id="btn-open-fortune" target="_blank" rel="noopener" data-i18n="openFortune"></a>
+        <button class="btn ghost small" id="btn-new" data-i18n="newOrder"></button>
+      </div>
+      <p class="hint no-print" data-i18n="printHint"></p>
+    </section>
+  </main>
+
+  <!-- Settings -->
+  <dialog id="dlg-settings" class="no-print">
+    <form method="dialog">
+      <h3 data-i18n="settings"></h3>
+      <label for="base-url" data-i18n="baseUrlLabel"></label>
+      <input id="base-url" type="url" placeholder="https://your-site.netlify.app/">
+      <p class="hint" data-i18n="baseUrlHelp"></p>
+      <p class="hint"><span data-i18n="qrPreview"></span> <code id="qr-preview"></code></p>
+      <div class="dlg-actions">
+        <button class="btn ghost small" value="cancel" data-i18n="cancel"></button>
+        <button class="btn green small" id="save-settings" value="save" data-i18n="save"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Class demo QR -->
+  <dialog id="dlg-classqr" class="no-print">
+    <form method="dialog">
+      <h3 data-i18n="classQr"></h3>
+      <div class="class-qr" id="class-qr"></div>
+      <p class="hint" data-i18n="classQrHelp"></p>
+      <p class="hint"><code id="class-qr-url"></code></p>
+      <p class="warn" id="class-qr-warn" hidden></p>
+      <div class="dlg-actions">
+        <button class="btn ghost small" value="close" data-i18n="close"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Coupon check -->
+  <dialog id="dlg-coupon" class="no-print">
+    <form method="dialog" id="coupon-form">
+      <h3 data-i18n="checkCoupon"></h3>
+      <label for="coupon-id" data-i18n="couponLabel"></label>
+      <div class="coupon-row">
+        <input id="coupon-id" placeholder="S261127-K7QF" autocomplete="off" spellcheck="false">
+        <button class="btn small" id="coupon-check" type="button" data-i18n="check"></button>
+      </div>
+      <div id="coupon-result" class="coupon-result" role="status"></div>
+      <div class="dlg-actions">
+        <button class="btn ghost small" value="close" data-i18n="close"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <canvas id="work-canvas" hidden></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/brand.js"></script>
+  <script src="js/fortunes.js"></script>
+  <script src="js/luck.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/cashier.js"></script>
+</body>
+</html>
