@@ -11,6 +11,7 @@
       cashierTag: "Cashier · Salaya",
       checkCoupon: "Check coupon",
       classQr: "Class demo QR",
+      gallery: "Gallery",
       classQrHelp: "Show this on the projector. Everyone who scans gets their own random draw (25% are lucky and spin the wheel).",
       settings: "Settings",
       stepOrder: "Order",
@@ -78,6 +79,7 @@
       cashierTag: "แคชเชียร์ · ศาลายา",
       checkCoupon: "ตรวจคูปอง",
       classQr: "QR เดโมในห้อง",
+      gallery: "แกลเลอรี",
       classQrHelp: "เปิดขึ้นจอโปรเจกเตอร์ ทุกคนที่สแกนจะได้เสี่ยงเซียมซีของตัวเอง (25% ได้หมุนวงล้อ)",
       settings: "ตั้งค่า",
       stepOrder: "รายการสั่ง",
@@ -296,6 +298,14 @@
   async function afterPhotos() {
     state.stripUrl = state.photos.length ? await composeStrip(state.photos) : null;
     msg(state.photos.length ? t("photosReady") : "");
+    // keep every strip in the on-device gallery
+    state.stripId = null;
+    if (state.stripUrl && window.SSGallery) {
+      try {
+        const blob = await (await fetch(state.stripUrl)).blob();
+        state.stripId = await window.SSGallery.add({ blob, receiptId: state.receipt?.id || null });
+      } catch (e) { console.warn("Couldn't save to gallery", e); }
+    }
     if (state.receipt) { state.receipt.stripUrl = state.stripUrl; renderBack(); }
   }
 
@@ -490,6 +500,7 @@
       wmap[wheel] = { receipt: id, at: date.toISOString() };
       store.set("ss_wheel_issued", wmap);
     }
+    if (state.stripId) window.SSGallery?.update(state.stripId, { receiptId: id }).catch(() => {});
     renderReceipt();
     $("#flip").classList.remove("flipped");
   }
@@ -508,6 +519,7 @@
     state.cart = {};
     state.photos = [];
     state.stripUrl = null;
+    state.stripId = null;
     state.receipt = null;
     renderCart();
     renderThumbs();
